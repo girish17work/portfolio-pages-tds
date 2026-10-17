@@ -1,0 +1,36 @@
+name: Publish portfolio and termlog archive
+
+on:
+  push:
+    branches: ["main"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build static site
+        run: |
+          mkdir -p _site
+          cp index.html _site/index.html
+          printf '%s' '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' | base64 --decode > _site/submission.tar.gz
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+      - name: Deploy
+        id: deployment
+        uses: actions/deploy-pages@v4
